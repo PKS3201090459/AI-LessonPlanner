@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI-LessonPlanner | Интеллектуальный помощник учителя</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1>🤖 AI-LessonPlanner</h1>
+        </header>
+
+        <nav class="tabs">
+            <button class="tab-button active" data-tab="generator">🧠 Генератор Контента</button>
+            <button class="tab-button" data-tab="analytics">📈 Аналитика Прогресса</button>
+        </nav>
+
+        <div id="generator" class="tab-content active">
+            <h2>💡 Генератор Учебного Контента</h2>
+            <p class="subtitle">Создавайте структурированные планы уроков и 10 тестовых вопросов за считанные секунды.
+            </p>
+
+            <div class="form-container">
+                <h3>📝 Ввод параметров урока</h3>
+                <form id="lessonForm">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="theme">📚 Тема урока:</label>
+                            <input type="text" id="theme" value="Клеточная структура ДНК" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="grade">🏫 Класс/Уровень:</label>
+                            <select id="grade">
+                                <option value="5 класс">5 класс</option>
+                                <option value="8 класс">8 класс</option>
+                                <option value="10 класс" selected>10 класс</option>
+                                <option value="Колледж (1 курс)">Колледж (1 курс)</option>
+                                <option value="Университет (2 курс)">Университет (2 курс)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="duration">⏱️ Продолжительность (мин):</label>
+                            <input type="number" id="duration" value="45" min="20" max="90" required>
+                        </div>
+                        <div class="form-group language-select">
+                            <label>🌐 Язык генерации:</label>
+                            <div class="radio-group">
+                                <input type="radio" id="lang-ru" name="language" value="Русский" checked>
+                                <label for="lang-ru">Русский</label>
+                                <input type="radio" id="lang-kz" name="language" value="Казахский">
+                                <label for="lang-kz">Казахский</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="submit" id="submitBtn">🚀 Сгенерировать план и тест</button>
+                </form>
+            </div>
+
+            <p id="statusMessage" class="status-message"></p>
+
+            <div id="resultContainer" class="result-container" style="display: none;">
+
+                <div class="actions">
+                    <button class="action-btn primary" id="saveBtn">📥 Сохранить в Архив</button>
+                    <button class="action-btn secondary" id="downloadDocxBtn">📑 Скачать DOCX</button>
+                    <a href="https://forms.google.com" target="_blank" class="action-btn secondary">🔗 Опубликовать в
+                        Google Forms</a>
+                </div>
+
+                <h3>📄 План Урока (для просмотра)</h3>
+                <div id="resultOutput" class="markdown-output">
+                </div>
+
+                <div id="jsonTestContainer" style="margin-top: 30px; display: none;">
+                    <h3>📋 Структура Теста (JSON для импорта)</h3>
+                    <p class="subtitle">Скопируйте этот JSON-объект, чтобы использовать его для автоматизации создания
+                        формы.</p>
+                    <textarea id="jsonTestOutput" readonly class="markdown-output" rows="15"
+                        style="width: 100%;"></textarea>
+                    <button class="action-btn secondary" id="copyJsonBtn" style="margin-top: 10px; width: auto;">📋
+                        Копировать JSON</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="analytics" class="tab-content">
+            <h2>📈 Аналитика Прогресса Учащихся</h2>
+            <p class="subtitle">Визуализация пробелов в знаниях, основанная на сохраненных данных.</p>
+
+            <div id="analyticsContent">
+                <p id="noDataMessage">⚠️ Нет сохраненных уроков для анализа. Сгенерируйте и сохраните план на предыдущей
+                    вкладке.</p>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
