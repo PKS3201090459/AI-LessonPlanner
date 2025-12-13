@@ -34,7 +34,8 @@ body {
     margin: 0;
     padding: 30px 20px;
     line-height: 1.6;
-    min-height: 100vh; /* ГАРАНТИЯ 100% ВЫСОТЫ */
+    min-height: 100vh;
+    /* ГАРАНТИЯ 100% ВЫСОТЫ */
 }
 
 .container {
@@ -345,6 +346,54 @@ select {
     border-radius: 4px;
     font-size: 0.9rem;
     min-width: 120px;
+}
+
+/* --- 6. АНАЛИТИКА (Улучшенные стили для кнопок в таблице) --- */
+
+/* Базовый стиль для всех кнопок действий в таблице */
+.analytics-table button {
+    /* Уменьшаем вертикальный отступ и размер шрифта */
+    padding: 6px 10px;
+    border: none;
+    /* Убираем стандартную рамку */
+    border-radius: 6px;
+    /* Немного скругляем углы */
+    font-size: 0.8rem;
+    /* Чуть уменьшаем шрифт */
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.2s;
+    margin-top: 5px;
+    /* Добавляем отступ сверху, чтобы разделить их */
+    display: block;
+    /* Каждая кнопка на своей строке */
+    width: 100%;
+    /* Занимают 100% доступной ширины ячейки */
+    text-align: center;
+}
+
+/* Стилизация кнопки "Расчет и сохранение" */
+.save-data-btn {
+    background-color: var(--save-color);
+    /* #17a2b8 */
+    color: white;
+}
+
+.save-data-btn:hover {
+    background-color: #138496;
+    transform: translateY(-1px);
+}
+
+/* Стилизация кнопки "Удалить" */
+.delete-btn {
+    background-color: var(--danger-color);
+    /* #dc3545 */
+    color: white;
+}
+
+.delete-btn:hover {
+    background-color: #c82333;
+    transform: translateY(-1px);
 }
 
 /* Метрики (стили карточек) */
