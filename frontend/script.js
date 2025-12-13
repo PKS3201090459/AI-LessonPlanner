@@ -66,7 +66,7 @@ lessonForm.addEventListener('submit', async function(e) {
     saveBtn.disabled = true;
     submitBtn.disabled = true;
     
-    showStatus(`💫 Генерация плана урока "${theme}" на ${language} языке...`);
+    showStatus(`💫 Генерация плана урока "${theme}" на ${language} язык...`);
 
     try {
         const response = await fetch('http://localhost:3000/api/generate-lesson', {
@@ -217,7 +217,7 @@ function updateLessonData(index, scoresString) {
 }
 
 
-// --- 5. РЕНДЕРИНГ АНАЛИТИКИ (Обновлено) ---
+// --- 5. РЕНДЕРИНГ АНАЛИТИКИ (Исправлено) ---
 
 function renderAnalytics() {
     analyticsContent.innerHTML = ''; 
@@ -227,24 +227,27 @@ function renderAnalytics() {
         return;
     }
 
+    // 1. Подготовка и расчет метрик
     const displayData = lessonArchive.map(lesson => {
-        let avgScore = typeof lesson.avg_score === 'number' ? lesson.avg_score : 0;
+        // Убедимся, что данные - числа (заменяем 0, если не число)
+        let avgScore = typeof lesson.avg_score === 'number' && lesson.avg_score > 0 ? lesson.avg_score : 0;
         let studentsToRepeat = typeof lesson.students_to_repeat === 'number' ? lesson.students_to_repeat : 0;
         
         return {
-            date: lesson.date,
-            theme: lesson.theme,
-            grade: lesson.grade,
+            ...lesson,
             avg_score: avgScore,
             students_to_repeat: studentsToRepeat,
             isMock: avgScore === 0 
         };
     });
     
-    // Метрики
     const totalTests = displayData.length;
+    // Используем только уроки с ненулевым средним баллом для общего расчета
     const validScores = displayData.map(l => l.avg_score).filter(s => s > 0); 
-    const avgScoreOverall = validScores.length > 0 ? (validScores.reduce((sum, score) => sum + score, 0) / validScores.length).toFixed(1) : 'N/A';
+    
+    // Рассчитываем общий средний балл как число (toFixed(1) делаем при выводе)
+    const avgScoreOverallNum = validScores.length > 0 ? validScores.reduce((sum, score) => sum + score, 0) / validScores.length : null;
+    const avgScoreOverallDisplay = avgScoreOverallNum !== null ? avgScoreOverallNum.toFixed(1) : 'N/A';
     
     // Находим тему с наибольшим количеством учеников, требующих повторения
     const problematicLesson = displayData.reduce((max, lesson) => 
@@ -257,7 +260,7 @@ function renderAnalytics() {
     const hasRepeaters = displayData.some(lesson => lesson.students_to_repeat > 0);
 
 
-    // 1. Метрики 
+    // 2. Метрики (Используем обновленный расчет и форматирование)
     analyticsContent.innerHTML += `
         <h3>🚨 Ключевые показатели</h3>
         <div class="metric-grid">
@@ -267,7 +270,7 @@ function renderAnalytics() {
             </div>
             <div class="metric-card">
                 <p>Средний балл по актуальным данным</p>
-                <strong>${avgScoreOverall}%</strong>
+                <strong>${avgScoreOverallDisplay}%</strong>
             </div>
             <div class="metric-card">
                 <p>Самая проблемная тема</p>
@@ -276,17 +279,17 @@ function renderAnalytics() {
         </div>
     `;
 
-    // 2. Предупреждение о необходимости ввода данных
-     if (displayData.some(d => d.isMock)) {
-         analyticsContent.innerHTML += `
-             <div class="status-message error" style="margin-top:20px;">
-                 💡 **Внимание:** Некоторые уроки (0%) требуют ввода **списка баллов** для корректного расчета общей статистики.
-             </div>
-         `;
-     }
+    // 3. Предупреждение о необходимости ввода данных (Используем <strong> для жирного шрифта)
+    if (displayData.some(d => d.isMock)) {
+        analyticsContent.innerHTML += `
+            <div class="status-message error" style="margin-top:20px;">
+                💡 <strong>Внимание:</strong> Некоторые уроки требуют ввода <strong>списка баллов</strong> для корректного расчета общей статистики.
+            </div>
+        `;
+    }
 
 
-    // 3. Таблица
+    // 4. Таблица
     let tableHtml = `
         <h3 style="margin-top: 30px;">📋 Сводка по сохраненным тестам</h3>
         <table class="analytics-table">
@@ -297,7 +300,7 @@ function renderAnalytics() {
                     <th>Класс</th>
                     <th>Баллы учащихся (0-100, ввод)</th>
                     <th>Средний балл (%)</th>
-                    <th>Учеников, требующих повторения (<50%)</th>
+                    <th>Учеников, требующих повторения (&le;50%)</th>
                     <th>Действия</th>
                 </tr>
             </thead>
@@ -305,24 +308,25 @@ function renderAnalytics() {
     `;
     
     lessonArchive.forEach((lesson, index) => {
+        const currentLesson = displayData[index]; // Используем обработанные данные
         tableHtml += `
             <tr>
-                <td>${lesson.date}</td>
-                <td>${lesson.theme}</td>
-                <td>${lesson.grade}</td>
+                <td>${currentLesson.date}</td>
+                <td>${currentLesson.theme}</td>
+                <td>${currentLesson.grade}</td>
                 <td>
                     <input type="text" 
-                           class="scores-input" 
-                           data-index="${index}" 
-                           value="${lesson.scores_list}"
-                           placeholder="90, 85, 45, 100..."
-                           style="width: 150px;">
+                               class="scores-input" 
+                               data-index="${index}" 
+                               value="${lesson.scores_list}"
+                               placeholder="90, 85, 45, 100..."
+                               style="width: 150px;">
                 </td>
                 <td>
-                    <strong>${lesson.avg_score}%</strong>
+                    <strong>${currentLesson.avg_score}%</strong>
                 </td>
                 <td>
-                    <strong>${lesson.students_to_repeat}</strong>
+                    <strong>${currentLesson.students_to_repeat}</strong>
                 </td>
                 <td>
                     <button class="save-data-btn" data-index="${index}">💾 Расчет и сохранение</button>
@@ -339,16 +343,16 @@ function renderAnalytics() {
     
     analyticsContent.innerHTML += tableHtml;
     
-    // 4. Условный Вывод AI (ИМИТАЦИЯ)
+    // 5. Условный Вывод AI (ИМИТАЦИЯ) (Используем <strong>)
     if (hasRepeaters) {
         analyticsContent.innerHTML += `
             <div class="status-message error" style="margin-top:20px;">
-                 🔥 **Вывод AI (имитация):** Тема **'${mostProblematicTheme}'** требует немедленного повторения.
+                🔥 <strong>Вывод AI (имитация):</strong> Тема <strong>'${mostProblematicTheme}'</strong> требует немедленного повторения.
             </div>
         `;
     }
     
-    // 5. Привязка обработчиков событий для кнопок
+    // 6. Привязка обработчиков событий для кнопок (Остается без изменений)
     document.querySelectorAll('.delete-btn').forEach(button => {
         button.addEventListener('click', (e) => {
             const indexToDelete = parseInt(e.target.dataset.index, 10);
@@ -356,7 +360,6 @@ function renderAnalytics() {
         });
     });
     
-    // ПРИВЯЗКА ДЛЯ КНОПОК РАСЧЕТА И СОХРАНЕНИЯ
     document.querySelectorAll('.save-data-btn').forEach(button => {
         button.addEventListener('click', (e) => {
             const index = parseInt(e.target.dataset.index, 10);

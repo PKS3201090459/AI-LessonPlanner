@@ -29,11 +29,12 @@
 
 body {
     font-family: 'Roboto', sans-serif;
-    background-color: var(--background-page);
+    background: linear-gradient(to bottom, #E61DC2, #760EF4);
     color: var(--text-dark);
     margin: 0;
     padding: 30px 20px;
     line-height: 1.6;
+    min-height: 100vh; /* ГАРАНТИЯ 100% ВЫСОТЫ */
 }
 
 .container {
